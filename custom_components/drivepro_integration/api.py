@@ -8,6 +8,8 @@ from typing import Any
 import aiohttp
 import async_timeout
 
+from .const import DOMAIN, LOGGER
+
 
 class DriveproIntegrationApiClientError(Exception):
     """Exception to indicate a general API error."""
@@ -51,26 +53,32 @@ class DriveproIntegrationApiClient:
 
     async def async_get_access_token(self) -> Any:
         """Get tokens from the API."""
-        return await self._api_wrapper(
+        LOGGER.info('Drivepro Fetch Tokens')
+        data = aiohttp.FormData()
+        data.add_field('grant_type', 'client_credentials')
+        data.add_field("client_id",self._username)
+        data.add_field("client_secret", self._password)
+        tokens= await self._api_wrapper(
             method="post",
             url="https://www.drivepro.io/oAuth/Token",
-            data={"grant_type": "client_credentials",
-                  "client_id": self._username,
-                  "client_secret": self._password
-                  },
-#            headers={"Content-type": "application/x-www-form-urlencoded"}
+            formData=data,
+            headers={"Content-type": "application/x-www-form-urlencoded"}
         )
+        LOGGER.info('Drivepro Tokens %s',tokens)
+        return tokens
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
+        LOGGER.info('Drivepro Fetch Data')
         tokens = await self.async_get_access_token()
-
-        return await self._api_wrapper(
+        LOGGER.info('Drivepro Tokens %s',tokens)
+        vehicleData = await self._api_wrapper(
             method="get",
             url="https://www.drivepro.io/FleetApi/GetVehicles",
-            headers={"Authorization": "Bearer "+tokens.access_token},
-
+            headers={"Authorization": "Bearer "+tokens.access_token}
         )
+        LOGGER.info('Drivepro Tokens %s',vehicleData)
+        return vehicleData        
 
     async def async_set_title(self, value: str) -> Any:
         """Get data from the API."""
@@ -85,7 +93,8 @@ class DriveproIntegrationApiClient:
         self,
         method: str,
         url: str,
-        data: dict | None = None,
+        jsonData: dict | None = None,
+        formData: aiohttp.FormData| None=None,
         headers: dict | None = None,
     ) -> Any:
         """Get information from the API."""
@@ -95,7 +104,8 @@ class DriveproIntegrationApiClient:
                     method=method,
                     url=url,
                     headers=headers,
-                    json=data,
+                    json=jsonData,
+                    data=formData
                 )
                 _verify_response_or_raise(response)
                 return await response.json()
