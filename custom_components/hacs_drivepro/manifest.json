@@ -1,12 +1,12 @@
 {
-  "domain": "integration_blueprint",
-  "name": "Integration blueprint",
-  "codeowners": [
-    "@ludeeus"
-  ],
-  "config_flow": true,
-  "documentation": "https://github.com/ludeeus/integration_blueprint",
-  "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/ludeeus/integration_blueprint/issues",
-  "version": "0.0.0"
+    "domain": "drivepro_integration",
+    "name": "DrivePro Integration",
+    "codeowners": [
+        "@viamatt"
+    ],
+    "config_flow": true,
+    "documentation": "https://github.com/viamatt/hacs_drivepro",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/viamatt/hacs_drivepro/issues",
+    "version": "0.0.0"
 }
