@@ -58,7 +58,7 @@ class DriveproIntegrationApiClient:
                   "client_id": self._username,
                   "client_secret": self._password
                   },
-                  headers={"Content-type": "application/x-www-form-urlencoded"}
+#            headers={"Content-type": "application/x-www-form-urlencoded"}
         )
 
     async def async_get_data(self) -> Any:
