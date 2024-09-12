@@ -14,7 +14,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import DriveproIntegrationApiClient
-from .coordinator import BlueprintDataUpdateCoordinator
+from .coordinator import DriveproDataUpdateCoordinator
 from .data import DriveproIntegrationData
 
 if TYPE_CHECKING:
@@ -35,7 +35,7 @@ async def async_setup_entry(
     entry: DriveproIntegrationConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
-    coordinator = BlueprintDataUpdateCoordinator(
+    coordinator = DriveproDataUpdateCoordinator(
         hass=hass,
     )
     entry.runtime_data = DriveproIntegrationData(

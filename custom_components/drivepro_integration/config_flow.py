@@ -1,4 +1,4 @@
-"""Adds config flow for Blueprint."""
+"""Adds config flow for DrivePro."""
 
 from __future__ import annotations
 
@@ -17,8 +17,8 @@ from .api import (
 from .const import DOMAIN, LOGGER
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+class DriveproFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for DrivePro."""
 
     VERSION = 1
 

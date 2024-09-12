@@ -4,5 +4,5 @@ from logging import Logger, getLogger
 
 LOGGER: Logger = getLogger(__package__)
 
-DOMAIN = "DrivePro integration"
+DOMAIN = "drivepro_integration"
 ATTRIBUTION = "Data provided by https://www.drivepro.io"

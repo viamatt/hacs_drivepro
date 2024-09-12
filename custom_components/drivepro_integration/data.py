@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from homeassistant.loader import Integration
 
     from .api import DriveproIntegrationApiClient
-    from .coordinator import BlueprintDataUpdateCoordinator
+    from .coordinator import DriveproDataUpdateCoordinator
 
 
 type DriveproIntegrationConfigEntry = ConfigEntry[DriveproIntegrationData]
@@ -21,5 +21,5 @@ class DriveproIntegrationData:
     """Data for the Blueprint integration."""
 
     client: DriveproIntegrationApiClient
-    coordinator: BlueprintDataUpdateCoordinator
+    coordinator: DriveproDataUpdateCoordinator
     integration: Integration
