@@ -53,7 +53,7 @@ class DriveproIntegrationApiClient:
 
     async def async_get_access_token(self) -> Any:
         """Get tokens from the API."""
-        LOGGER.info('Drivepro Fetch Tokens')
+        LOGGER.debug('Drivepro Fetch Tokens')
         data = aiohttp.FormData()
         data.add_field('grant_type', 'client_credentials')
         data.add_field("client_id",self._username)
@@ -64,20 +64,21 @@ class DriveproIntegrationApiClient:
             formData=data,
             headers={"Content-type": "application/x-www-form-urlencoded"}
         )
-        LOGGER.info('Drivepro Tokens %s',tokens)
         return tokens
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
-        LOGGER.info('Drivepro Fetch Data')
+        LOGGER.debug('Drivepro Fetch Data')
         tokens = await self.async_get_access_token()
-        LOGGER.info('Drivepro Tokens %s',tokens)
+        LOGGER.debug('Drivepro Tokens %s',tokens)
+        for key, value in tokens.items():
+            print(key,':',value)
         vehicleData = await self._api_wrapper(
             method="get",
             url="https://www.drivepro.io/FleetApi/GetVehicles",
-            headers={"Authorization": "Bearer "+tokens.access_token}
+            headers={"Authorization": "Bearer " + tokens['access_token']}
         )
-        LOGGER.info('Drivepro Tokens %s',vehicleData)
+        LOGGER.debug('Drivepro Vehicles %s',vehicleData)        
         return vehicleData        
 
     async def async_set_title(self, value: str) -> Any:
