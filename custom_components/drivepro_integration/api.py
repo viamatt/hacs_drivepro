@@ -69,16 +69,14 @@ class DriveproIntegrationApiClient:
         """Get data from the API."""
         LOGGER.debug("Drivepro Fetch Data")
         tokens = await self.async_get_access_token()
-        LOGGER.debug("Drivepro Tokens %s",tokens)
-        for key, value in tokens.items():
-            print(key,':',value)
-        vehicleData = await self._api_wrapper(
+        LOGGER.debug("Drivepro Tokens %s",tokens)        
+        vehicledata = await self._api_wrapper(
             method="get",
             url="https://www.drivepro.io/FleetApi/GetVehicles",
-            headers={"Authorization": "Bearer " + tokens['access_token']}
+            headers={"Authorization": "Bearer " + tokens["access_token"]}
         )
-        LOGGER.debug("Drivepro Vehicles %s",vehicleData)        
-        return vehicleData
+        LOGGER.debug("Drivepro Vehicles %s",vehicledata)
+        return vehicledata
 
     async def async_set_title(self, value: str) -> Any:
         """Get data from the API."""
@@ -104,8 +102,8 @@ class DriveproIntegrationApiClient:
                     method=method,
                     url=url,
                     headers=headers,
-                    json=jsonData,
-                    data=formData
+                    json=jsondata,
+                    data=formdata
                 )
                 _verify_response_or_raise(response)
                 return await response.json()
