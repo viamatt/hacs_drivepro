@@ -55,7 +55,7 @@ class DriveproIntegrationApiClient:
             method="post",
             url="https://www.drivepro.io/oAuth/Token",
             data={"grant_type": "client_credentials",
-                  "clientid": self._username,
+                  "client_id": self._username,
                   "client_secret": self._password
                   },
                   headers={"Content-type": "application/x-www-form-urlencoded"}
@@ -63,7 +63,7 @@ class DriveproIntegrationApiClient:
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
-        tokens = await self.async_get_access_token();
+        tokens = await self.async_get_access_token()
 
         return await self._api_wrapper(
             method="get",
