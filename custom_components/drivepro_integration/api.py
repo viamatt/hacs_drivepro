@@ -44,16 +44,32 @@ class DriveproIntegrationApiClient:
         password: str,
         session: aiohttp.ClientSession,
     ) -> None:
-        """Sample API Client."""
+        """Drivepro API Client."""
         self._username = username
         self._password = password
         self._session = session
 
+    async def async_get_access_token(self) -> Any:
+        """Get tokens from the API."""
+        return await self._api_wrapper(
+            method="post",
+            url="https://www.drivepro.io/oAuth/Token",
+            data={"grant_type": "client_credentials",
+                  "clientid": self._username,
+                  "client_secret": self._password
+                  },
+                  headers={"Content-type": "application/x-www-form-urlencoded"}
+        )
+
     async def async_get_data(self) -> Any:
         """Get data from the API."""
+        tokens = await self.async_get_access_token();
+
         return await self._api_wrapper(
             method="get",
-            url="https://jsonplaceholder.typicode.com/posts/1",
+            url="https://www.drivepro.io/FleetApi/GetVehicles",
+            headers={"Authorization": "Bearer "+tokens.access_token},
+
         )
 
     async def async_set_title(self, value: str) -> Any:
