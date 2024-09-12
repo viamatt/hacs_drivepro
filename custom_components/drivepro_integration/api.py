@@ -8,7 +8,7 @@ from typing import Any
 import aiohttp
 import async_timeout
 
-from .const import DOMAIN, LOGGER
+from .const import LOGGER
 
 
 class DriveproIntegrationApiClientError(Exception):
@@ -53,24 +53,23 @@ class DriveproIntegrationApiClient:
 
     async def async_get_access_token(self) -> Any:
         """Get tokens from the API."""
-        LOGGER.debug('Drivepro Fetch Tokens')
+        LOGGER.debug("Drivepro Fetch Tokens")
         data = aiohttp.FormData()
-        data.add_field('grant_type', 'client_credentials')
+        data.add_field("grant_type", "client_credentials")
         data.add_field("client_id",self._username)
         data.add_field("client_secret", self._password)
-        tokens= await self._api_wrapper(
+        return  await self._api_wrapper(
             method="post",
             url="https://www.drivepro.io/oAuth/Token",
-            formData=data,
+            formdata=data,
             headers={"Content-type": "application/x-www-form-urlencoded"}
         )
-        return tokens
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
-        LOGGER.debug('Drivepro Fetch Data')
+        LOGGER.debug("Drivepro Fetch Data")
         tokens = await self.async_get_access_token()
-        LOGGER.debug('Drivepro Tokens %s',tokens)
+        LOGGER.debug("Drivepro Tokens %s",tokens)
         for key, value in tokens.items():
             print(key,':',value)
         vehicleData = await self._api_wrapper(
@@ -78,8 +77,8 @@ class DriveproIntegrationApiClient:
             url="https://www.drivepro.io/FleetApi/GetVehicles",
             headers={"Authorization": "Bearer " + tokens['access_token']}
         )
-        LOGGER.debug('Drivepro Vehicles %s',vehicleData)        
-        return vehicleData        
+        LOGGER.debug("Drivepro Vehicles %s",vehicleData)        
+        return vehicleData
 
     async def async_set_title(self, value: str) -> Any:
         """Get data from the API."""
@@ -94,8 +93,8 @@ class DriveproIntegrationApiClient:
         self,
         method: str,
         url: str,
-        jsonData: dict | None = None,
-        formData: aiohttp.FormData| None=None,
+        jsondata: dict | None = None,
+        formdata: aiohttp.FormData| None=None,
         headers: dict | None = None,
     ) -> Any:
         """Get information from the API."""
