@@ -69,7 +69,7 @@ class DriveproIntegrationApiClient:
         """Get data from the API."""
         LOGGER.debug("Drivepro Fetch Data")
         tokens = await self.async_get_access_token()
-        LOGGER.debug("Drivepro Tokens %s",tokens)        
+        LOGGER.debug("Drivepro Tokens %s",tokens)
         vehicledata = await self._api_wrapper(
             method="get",
             url="https://www.drivepro.io/FleetApi/GetVehicles",
