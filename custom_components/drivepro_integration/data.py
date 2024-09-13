@@ -38,7 +38,11 @@ class DriveproVehicle:
     Manufacturer: str
     Model:str
     SupplyMilliVoltage: int
+
     def __init__(self, d=None):
         if d is not None:
-            for key, value in d.items():
-                setattr(self, key, value)
+            self.FleetVehicleId=d["FleetVehicleId"]
+            self.Label=d["Label"]
+            self.Manufacturer=d["Manufacturer"]
+            self.Model=d["Model"]
+            self.SupplyMilliVoltage=int(d["SupplyMilliVoltage"])
