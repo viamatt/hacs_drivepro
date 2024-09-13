@@ -17,6 +17,7 @@ class DriveproIntegrationEntity(CoordinatorEntity[DriveproDataUpdateCoordinator]
     def __init__(self,coordinator: DriveproDataUpdateCoordinator,vehicle: DriveproVehicle) -> None:
         """Initialize."""
         super().__init__(coordinator)
+        self.vehicle = vehicle
         self._attr_unique_id = vehicle.FleetVehicleId
         self._attr_device_info = DeviceInfo(
             identifiers={
