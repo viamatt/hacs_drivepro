@@ -38,6 +38,7 @@ class DriveproVehicle:
     Manufacturer: str
     Model:str
     SupplyMilliVoltage: int
+    SupplyVoltage: float
 
     def __init__(self, d=None):
         if d is not None:
@@ -46,3 +47,4 @@ class DriveproVehicle:
             self.Manufacturer=d["Manufacturer"]
             self.Model=d["Model"]
             self.SupplyMilliVoltage=int(d["Location"]["SupplyMilliVoltage"])
+            self.SupplyVoltage=int(d["Location"]["SupplyMilliVoltage"])/1000
