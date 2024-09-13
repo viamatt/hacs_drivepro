@@ -35,7 +35,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    LOGGER.debug("Drivepro Setup Sensor %s",entry.runtime_data.coordinator.data)
+    #LOGGER.debug("Drivepro Setup Sensors %s",entry.runtime_data.coordinator.data)
 
     sensors = []
     config_vehicle:DriveproVehicle
@@ -72,7 +72,7 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         LOGGER.debug("Drivepro INIT Sensor %s",vehicle)
         super().__init__(coordinator,vehicle)
         self.vehicle=vehicle
-        self._attr_unique_id = f"{vehicle.VehicleId}-{entity_description.key}"
+        self._attr_unique_id = f"{vehicle.FleetFleetVehicleId}-{entity_description.key}"
         self.entity_description = entity_description
       
 

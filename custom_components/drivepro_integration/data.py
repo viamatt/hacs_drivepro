@@ -27,7 +27,7 @@ class DriveproIntegrationData:
 
 class DriveproVehicle:
     """Models state of one vehicle."""
-    VehicleId: str
+    FleetVehicleId: str
     Label: str
     Manufacturer: str
     Model:str
