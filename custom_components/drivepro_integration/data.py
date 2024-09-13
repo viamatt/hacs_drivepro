@@ -39,6 +39,9 @@ class DriveproVehicle:
     Model:str
     SupplyMilliVoltage: int
     SupplyVoltage: float
+    Latitude:float
+    Longitude:float
+    Heading:int
 
     def __init__(self, d=None):
         if d is not None:
@@ -48,3 +51,7 @@ class DriveproVehicle:
             self.Model=d["Model"]
             self.SupplyMilliVoltage=int(d["Location"]["SupplyMilliVoltage"])
             self.SupplyVoltage=int(d["Location"]["SupplyMilliVoltage"])/1000
+            #
+            self.Latitude=float(d["Location"]["Latitude"])
+            self.Longitude=float(d["Location"]["Longitude"])
+            self.Heading=int(d["Location"]["Heading"])
