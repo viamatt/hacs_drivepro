@@ -45,4 +45,4 @@ class DriveproVehicle:
             self.Label=d["Label"]
             self.Manufacturer=d["Manufacturer"]
             self.Model=d["Model"]
-            self.SupplyMilliVoltage=int(d["SupplyMilliVoltage"])
+            self.SupplyMilliVoltage=int(d["Location"]["SupplyMilliVoltage"])
