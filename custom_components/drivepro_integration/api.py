@@ -76,7 +76,7 @@ class DriveproIntegrationApiClient:
             headers={"Authorization": "Bearer " + tokens["access_token"]}
         )
         LOGGER.debug("Drivepro Vehicles %s",vehicledata)
-        return vehicledata
+        return vehicledata["Vehicles"]
 
     async def async_set_title(self, value: str) -> Any:
         """Get data from the API."""

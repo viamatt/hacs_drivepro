@@ -23,3 +23,10 @@ class DriveproIntegrationData:
     client: DriveproIntegrationApiClient
     coordinator: DriveproDataUpdateCoordinator
     integration: Integration
+
+
+@dataclass
+class MyBMWVehicle:
+    """Models state of one vehicle."""
+    VehicleId: str
+    Label: str

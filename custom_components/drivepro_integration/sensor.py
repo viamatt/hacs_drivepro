@@ -1,7 +1,7 @@
 """Sensor platform for integration_blueprint."""
 
 from __future__ import annotations
-
+from .data import DriveproVehicle
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
@@ -30,12 +30,27 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    async_add_entities(
-        DriveproIntegrationSensor(
-            coordinator=entry.runtime_data.coordinator,
-            entity_description=entity_description,
-        )
-        for entity_description in ENTITY_DESCRIPTIONS
+    LOGGER.debug("Drivepro Setup Sensor %s",entry)
+
+    sensors = []
+    for config_vehicle in entry:
+            sensors.append(DriveproIntegrationSensor(
+                 vehicle=config_vehicle,
+                 coordinator=entry.runtime_data.coordinator,
+                 entity_description = SensorEntityDescription(
+                    key="drivepro."+config_vehicle.VehicleId,
+                    name="DrivePro Vehicle "+config_vehicle.Label,
+                    icon="mdi:car",
+    ))
+            
+
+    async_add_entities(sensors, True)
+    # async_add_entities(
+    #     DriveproIntegrationSensor(
+    #         coordinator=entry.runtime_data.coordinator,
+    #         entity_description=entity_description,
+    #     )
+    #     for entity_description in ENTITY_DESCRIPTIONS
     )
 
 
@@ -45,6 +60,7 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
     def __init__(
         self,
         coordinator: DriveproDataUpdateCoordinator,
+        vehicle: DriveproVehicle,
         entity_description: SensorEntityDescription,
     ) -> None:
         """Initialize the sensor class."""
