@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Dict, List, NamedTuple, Optional, Tuple, Union
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -15,6 +16,11 @@ if TYPE_CHECKING:
 
 type DriveproIntegrationConfigEntry = ConfigEntry[DriveproIntegrationData]
 
+class ValueWithUnit(NamedTuple):
+    """A value with a corresponding unit."""
+
+    value: Optional[Union[int, float]]
+    unit: Optional[str]
 
 @dataclass
 class DriveproIntegrationData:

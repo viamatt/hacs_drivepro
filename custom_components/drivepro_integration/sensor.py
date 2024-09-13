@@ -11,23 +11,51 @@ from .entity import DriveproIntegrationEntity
 
 from .data import (DriveproVehicle)
 from .const import LOGGER
+from collections.abc import Callable
 
 
 if TYPE_CHECKING:
-    from homeassistant.core import HomeAssistant
+    from homeassistant.core import HomeAssistant, callback
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
+    from homeassistant.const import LENGTH, PERCENTAGE, VOLUME, UnitOfElectricPotential
     from .coordinator import DriveproDataUpdateCoordinator
-    from .data import DriveproIntegrationConfigEntry
+    from .data import DriveproIntegrationConfigEntry,ValueWithUnit
 
-ENTITY_DESCRIPTIONS = (
-    SensorEntityDescription(
-        key="drivepro",
-        name="DrivePro Integration Sensor",
-        icon="mdi:car",
-    ),
-)
 
+@dataclass
+class DriveproSensorEntityDescription(SensorEntityDescription):
+    """Describes BMW sensor entity."""
+
+    key_class: str | None = None
+    unit_type: str | None = None
+    value: Callable = lambda x, y: x
+
+
+def convert_and_round(
+    state: ValueWithUnit,
+    converter: Callable[[float | None, str], float],
+    precision: int,
+) -> float | None:
+    """Safely convert and round a value from ValueWithUnit."""
+    if state.value and state.unit:
+        return round(
+            converter(state.value, state.unit, precision
+        ))
+    if state.value:
+        return state.value
+    return None
+
+
+
+SENSOR_TYPES: dict[str, DriveproSensorEntityDescription] = {
+    # --- Generic ---
+    "SupplyMilliVoltage": DriveproSensorEntityDescription(
+        key="SupplyMilliVoltage",
+        name="Supply MilliVolts",
+        unit_type=UnitOfElectricPotential.MILLIVOLT,
+        icon="mdi:current-ac",
+    )
+}
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
@@ -43,10 +71,11 @@ async def async_setup_entry(
             sensors.append(DriveproIntegrationSensor(                 
                  coordinator=entry.runtime_data.coordinator,
                  vehicle=DriveproVehicle(config_vehicle),
-                 entity_description = SensorEntityDescription(
-                    key="drivepro.Label",
-                    name="DrivePro Vehicle Label",
-                    icon="mdi:car",
+                 entity_description = DriveproSensorEntityDescription(
+        key="SupplyMilliVoltage",
+        name="Supply MilliVolts",
+        unit_type=UnitOfElectricPotential.MILLIVOLT,
+        icon="mdi:current-ac",
     )))
     ## add all the sensors
     async_add_entities(sensors, True)
@@ -66,7 +95,7 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         self,
         coordinator: DriveproDataUpdateCoordinator,
         vehicle: DriveproVehicle,
-        entity_description: SensorEntityDescription,
+        entity_description: DriveproSensorEntityDescription,
     ) -> None:
         """Initialize the sensor class."""
         LOGGER.debug("Drivepro INIT Sensor %s",vehicle)
@@ -74,9 +103,22 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         self.vehicle=vehicle
         self._attr_unique_id = f"{vehicle.FleetVehicleId}-{entity_description.key}"
         self.entity_description = entity_description
+        ## set value
+        self.n
       
 
-    @property
-    def native_value(self) -> str | None:
-        """Return the native value of the sensor."""
-        return self.coordinator.data.get("body")
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        LOGGER.debug(
+            "DrivePro Updating sensor '%s' of %s", self.entity_description.key, self.vehicle.Label
+        )
+        if self.entity_description.key_class is None:
+            state = getattr(self.vehicle, self.entity_description.key)
+        else:
+            state = getattr(
+                getattr(self.vehicle, self.entity_description.key_class),
+                self.entity_description.key,
+            )
+        self._attr_native_value = state        
+        super()._handle_coordinator_update()
