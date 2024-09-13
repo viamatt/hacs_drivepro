@@ -70,9 +70,9 @@ async def async_setup_entry(
             sensors.append(DriveproIntegrationSensor(                 
                  coordinator=entry.runtime_data.coordinator,
                  vehicle=veh,
-                 entity_description = DriveproSensorEntityDescription(
-        key=veh.Label+"_"+"SupplyVoltage",
-        name=veh.Label+" "+"Supply Volts",
+                 description = DriveproSensorEntityDescription(
+        key="SupplyVoltage",
+        name=veh.Label+" "+"Supply Voltage",
         unit_type="V",
         icon="mdi:current-dc",
     )))
@@ -94,15 +94,20 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         self,
         coordinator: DriveproDataUpdateCoordinator,
         vehicle: DriveproVehicle,
-        entity_description: DriveproSensorEntityDescription,
+        description: DriveproSensorEntityDescription,
     ) -> None:
         """Initialize the sensor class."""
         LOGGER.debug("Drivepro INIT Sensor %s",vehicle)
         super().__init__(coordinator, vehicle)
         self.vehicle=vehicle
-        self._attr_unique_id = f"{vehicle.FleetVehicleId}-{entity_description.key}"
-        self.entity_description = entity_description
-        
+        self._attr_unique_id = f"{vehicle.FleetVehicleId}-{description.key}"
+        self.entity_description = description
+        # Set the correct unit of measurement based on the unit_type
+        if description.unit_type:
+            self._attr_native_unit_of_measurement = (
+                coordinator.hass.config.units.as_dict().get(description.unit_type)
+                or description.unit_type
+            )
       
 
     @callback
