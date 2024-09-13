@@ -72,7 +72,7 @@ class DriveproDeviceTracker(DriveproIntegrationEntity, TrackerEntity):
     @property
     def longitude(self) -> float | None:
         """Return longitude value of the device."""
-        return self.vehicle.Lonitude
+        return self.vehicle.Longitude
 
     @property
     def source_type(self) -> SourceType:
