@@ -101,8 +101,7 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         self.vehicle=vehicle
         self._attr_unique_id = f"{vehicle.FleetVehicleId}-{entity_description.key}"
         self.entity_description = entity_description
-        ## set value
-        self.n
+        
       
 
     @callback
