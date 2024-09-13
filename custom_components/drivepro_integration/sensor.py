@@ -9,6 +9,8 @@ from homeassistant.components.sensor import SensorEntity, SensorEntityDescriptio
 from .entity import DriveproIntegrationEntity
 
 from .data import (DriveproVehicle)
+from .const import LOGGER
+
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
