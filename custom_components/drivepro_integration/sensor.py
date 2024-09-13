@@ -42,7 +42,7 @@ async def async_setup_entry(
     for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
             sensors.append(DriveproIntegrationSensor(                 
                  coordinator=entry.runtime_data.coordinator,
-                 vehicle=config_vehicle,
+                 vehicle=DriveproVehicle(config_vehicle),
                  entity_description = SensorEntityDescription(
                     key="drivepro.Label",
                     name="DrivePro Vehicle Label",

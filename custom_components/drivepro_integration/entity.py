@@ -25,5 +25,7 @@ class DriveproIntegrationEntity(CoordinatorEntity[DriveproDataUpdateCoordinator]
                     vehicle.VehicleId,
                 ),                
             },
-            name=vehicle.Label
+            name=vehicle.Label,
+            model=vehicle.Model,
+            manufacturer=vehicle.Manufacturer
         )

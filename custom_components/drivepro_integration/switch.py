@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from .coordinator import DriveproDataUpdateCoordinator
     from .data import DriveproIntegrationConfigEntry
 
+from .data import DriveproVehicle
+
 ENTITY_DESCRIPTIONS = (
     SwitchEntityDescription(
         key="integration_blueprint",
