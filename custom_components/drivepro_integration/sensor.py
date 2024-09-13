@@ -34,17 +34,17 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    LOGGER.debug("Drivepro Setup Sensor %s",entry)
+    LOGGER.debug("Drivepro Setup Sensor %s",entry.runtime_data.coordinator.data)
 
     sensors = []
     config_vehicle:DriveproVehicle
-    for config_vehicle in entry:
+    for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
             sensors.append(DriveproIntegrationSensor(
                  vehicle=config_vehicle,
                  coordinator=entry.runtime_data.coordinator,
                  entity_description = SensorEntityDescription(
-                    key="drivepro."+config_vehicle.VehicleId+".Label",
-                    name="DrivePro Vehicle Label"+config_vehicle.Label,
+                    key="drivepro.Label",
+                    name="DrivePro Vehicle Label",
                     icon="mdi:car",
     )))
     ## add all the sensors
@@ -70,6 +70,11 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         """Initialize the sensor class."""
         super().__init__(coordinator)
         self.entity_description = entity_description
+        self._attr_device_info= DeviceInfo(
+            identifiers={
+                (coordinator.config_entry.domain,vehicle.VehicleId)},
+                name=vehicle.Label
+        )
 
     @property
     def native_value(self) -> str | None:

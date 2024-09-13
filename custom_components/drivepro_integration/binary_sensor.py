@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .coordinator import DriveproDataUpdateCoordinator
+    from .coordinator import BlueprintDataUpdateCoordinator
     from .data import DriveproIntegrationConfigEntry
 
 ENTITY_DESCRIPTIONS = (
@@ -48,7 +48,7 @@ class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEnt
 
     def __init__(
         self,
-        coordinator: DriveproDataUpdateCoordinator,
+        coordinator: BlueprintDataUpdateCoordinator,
         entity_description: BinarySensorEntityDescription,
     ) -> None:
         """Initialize the binary_sensor class."""
@@ -58,4 +58,5 @@ class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEnt
     @property
     def is_on(self) -> bool:
         """Return true if the binary_sensor is on."""
-        return "foo" == "foo"
+        #return self.coordinator.data.get("title", "") == "foo"
+        return true
