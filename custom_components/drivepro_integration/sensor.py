@@ -65,13 +65,13 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
     def __init__(
         self,
         coordinator: DriveproDataUpdateCoordinator,
-        veh: DriveproVehicle,
+        vehicle: DriveproVehicle,
         entity_description: SensorEntityDescription,
     ) -> None:
         """Initialize the sensor class."""
         LOGGER.debug("Drivepro INIT Sensor %s",veh)
         super().__init__(coordinator)
-        vehicle=veh
+        self.vehicle=vehicle
         self._attr_unique_id = f"{veh.VehicleId}-{entity_description.key}"
         self.entity_description = entity_description
       
