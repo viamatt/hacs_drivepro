@@ -66,14 +66,15 @@ async def async_setup_entry(
     sensors = []
     config_vehicle:DriveproVehicle
     for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
+            veh=DriveproVehicle(config_vehicle)
             sensors.append(DriveproIntegrationSensor(                 
                  coordinator=entry.runtime_data.coordinator,
-                 vehicle=DriveproVehicle(config_vehicle),
+                 vehicle=veh,
                  entity_description = DriveproSensorEntityDescription(
-        key="SupplyMilliVoltage",
-        name="Supply MilliVolts",
+        key=veh.Label+"_"+"SupplyMilliVoltage",
+        name=veh.Label+" "+"Supply MilliVolts",
         unit_type="mV",
-        icon="mdi:current-ac",
+        icon="mdi:current-dc",
     )))
     ## add all the sensors
     async_add_entities(sensors, True)
