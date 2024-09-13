@@ -41,9 +41,8 @@ async def async_setup_entry(
                     key="drivepro."+config_vehicle.VehicleId,
                     name="DrivePro Vehicle "+config_vehicle.Label,
                     icon="mdi:car",
-    ))
-            
-
+    )))
+    ## add all the sensors
     async_add_entities(sensors, True)
     # async_add_entities(
     #     DriveproIntegrationSensor(
@@ -51,7 +50,7 @@ async def async_setup_entry(
     #         entity_description=entity_description,
     #     )
     #     for entity_description in ENTITY_DESCRIPTIONS
-    )
+    
 
 
 class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
