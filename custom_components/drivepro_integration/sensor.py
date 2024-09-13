@@ -13,14 +13,11 @@ from .data import (DriveproVehicle)
 from .const import LOGGER
 from collections.abc import Callable
 from dataclasses import dataclass
-
-
-if TYPE_CHECKING:
-    from homeassistant.core import HomeAssistant, callback
-    from homeassistant.helpers.entity_platform import AddEntitiesCallback
-    from homeassistant.const import LENGTH, PERCENTAGE, VOLUME
-    from .coordinator import DriveproDataUpdateCoordinator
-    from .data import DriveproIntegrationConfigEntry,ValueWithUnit
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.const import LENGTH, PERCENTAGE, VOLUME
+from .coordinator import DriveproDataUpdateCoordinator
+from .data import DriveproIntegrationConfigEntry,ValueWithUnit
 
 
 @dataclass
