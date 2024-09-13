@@ -56,7 +56,7 @@ class DriveproDeviceTracker(DriveproIntegrationEntity, TrackerEntity):
         super().__init__(coordinator, vehicle)
         self.vehicle=vehicle
         self._attr_unique_id = vehicle.FleetVehicleId
-        self._attr_name = None
+        self._attr_name = vehicle.Label
 
     # @property
     # def extra_state_attributes(self) -> dict[str, Any]:
