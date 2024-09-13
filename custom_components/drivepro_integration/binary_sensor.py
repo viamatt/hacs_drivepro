@@ -58,4 +58,4 @@ class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEnt
     @property
     def is_on(self) -> bool:
         """Return true if the binary_sensor is on."""
-        return self.coordinator.data.get("title", "") == "foo"
+        return "foo" == "foo"

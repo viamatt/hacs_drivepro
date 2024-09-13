@@ -43,8 +43,8 @@ async def async_setup_entry(
                  vehicle=config_vehicle,
                  coordinator=entry.runtime_data.coordinator,
                  entity_description = SensorEntityDescription(
-                    key="drivepro."+config_vehicle.VehicleId,
-                    name="DrivePro Vehicle "+config_vehicle.Label,
+                    key="drivepro."+config_vehicle.VehicleId+".Label",
+                    name="DrivePro Vehicle Label"+config_vehicle.Label,
                     icon="mdi:car",
     )))
     ## add all the sensors
