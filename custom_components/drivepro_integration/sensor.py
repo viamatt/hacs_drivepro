@@ -12,6 +12,7 @@ from .entity import DriveproIntegrationEntity
 from .data import (DriveproVehicle)
 from .const import LOGGER
 from collections.abc import Callable
+from dataclasses import dataclass
 
 
 if TYPE_CHECKING:
