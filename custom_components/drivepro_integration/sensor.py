@@ -41,8 +41,8 @@ async def async_setup_entry(
     config_vehicle:DriveproVehicle
     for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
             sensors.append(DriveproIntegrationSensor(                 
-                 vehicle=config_vehicle,
                  coordinator=entry.runtime_data.coordinator,
+                 vehicle=config_vehicle,
                  entity_description = SensorEntityDescription(
                     key="drivepro.Label",
                     name="DrivePro Vehicle Label",
@@ -70,7 +70,7 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
     ) -> None:
         """Initialize the sensor class."""
         LOGGER.debug("Drivepro INIT Sensor %s",vehicle)
-        super().__init__(coordinator)
+        super().__init__(coordinator,vehicle)
         self.vehicle=vehicle
         self._attr_unique_id = f"{vehicle.VehicleId}-{entity_description.key}"
         self.entity_description = entity_description
