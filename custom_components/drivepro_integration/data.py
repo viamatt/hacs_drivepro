@@ -25,8 +25,7 @@ class DriveproIntegrationData:
     integration: Integration
 
 
-@dataclass
-class MyBMWVehicle:
+class DriveproVehicle:
     """Models state of one vehicle."""
     VehicleId: str
     Label: str

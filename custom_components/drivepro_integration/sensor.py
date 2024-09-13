@@ -1,12 +1,14 @@
 """Sensor platform for integration_blueprint."""
 
 from __future__ import annotations
-from .data import DriveproVehicle
+
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 
 from .entity import DriveproIntegrationEntity
+
+from .data import (DriveproVehicle)
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -33,6 +35,7 @@ async def async_setup_entry(
     LOGGER.debug("Drivepro Setup Sensor %s",entry)
 
     sensors = []
+    config_vehicle:DriveproVehicle
     for config_vehicle in entry:
             sensors.append(DriveproIntegrationSensor(
                  vehicle=config_vehicle,
