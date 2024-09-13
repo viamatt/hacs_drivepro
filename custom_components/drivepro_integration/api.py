@@ -72,7 +72,7 @@ class DriveproIntegrationApiClient:
         LOGGER.debug("Drivepro Tokens %s",tokens)
         vehicledata = await self._api_wrapper(
             method="get",
-            url="https://www.drivepro.io/FleetApi/GetVehicles",
+            url="https://www.drivepro.io/FleetApi/GetVehicles?PageSize=100",
             headers={"Authorization": "Bearer " + tokens["access_token"]}
         )
         LOGGER.debug("Drivepro Vehicles %s",vehicledata)
