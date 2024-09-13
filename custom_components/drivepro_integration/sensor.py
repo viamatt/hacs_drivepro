@@ -18,7 +18,7 @@ from dataclasses import dataclass
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant, callback
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
-    from homeassistant.const import LENGTH, PERCENTAGE, VOLUME, UnitOfElectricPotential
+    from homeassistant.const import LENGTH, PERCENTAGE, VOLUME
     from .coordinator import DriveproDataUpdateCoordinator
     from .data import DriveproIntegrationConfigEntry,ValueWithUnit
 
@@ -53,7 +53,7 @@ SENSOR_TYPES: dict[str, DriveproSensorEntityDescription] = {
     "SupplyMilliVoltage": DriveproSensorEntityDescription(
         key="SupplyMilliVoltage",
         name="Supply MilliVolts",
-        unit_type=UnitOfElectricPotential.MILLIVOLT,
+        unit_type="mV",
         icon="mdi:current-ac",
     )
 }
@@ -75,7 +75,7 @@ async def async_setup_entry(
                  entity_description = DriveproSensorEntityDescription(
         key="SupplyMilliVoltage",
         name="Supply MilliVolts",
-        unit_type=UnitOfElectricPotential.MILLIVOLT,
+        unit_type="mV",
         icon="mdi:current-ac",
     )))
     ## add all the sensors
