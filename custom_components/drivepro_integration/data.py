@@ -37,7 +37,7 @@ class DriveproVehicle:
     Label: str
     Manufacturer: str
     Model:str
-
+    SupplyMilliVoltage: int
     def __init__(self, d=None):
         if d is not None:
             for key, value in d.items():
