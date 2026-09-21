@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -18,12 +19,16 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import LOGGER
-from .coordinator import DriveproDataUpdateCoordinator
-from .data import DriveproIntegrationConfigEntry, DriveproVehicle
+from .data import DriveproVehicle
 from .entity import DriveproIntegrationEntity
+
+if TYPE_CHECKING:
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from .coordinator import DriveproDataUpdateCoordinator
+    from .data import DriveproIntegrationConfigEntry
 
 
 @dataclass
@@ -176,7 +181,7 @@ async def async_setup_entry(
                     description=description,
                 )
             )
-    async_add_entities(sensors, True)
+    async_add_entities(sensors, update_before_add=True)
 
 
 class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):

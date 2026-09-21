@@ -6,4 +6,3 @@ LOGGER: Logger = getLogger(__package__)
 
 DOMAIN = "drivepro_integration"
 ATTRIBUTION = "Data provided by https://www.drivepro.io"
-

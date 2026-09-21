@@ -56,35 +56,34 @@ class DriveproIntegrationApiClient:
         LOGGER.debug("Drivepro Fetch Tokens")
         data = aiohttp.FormData()
         data.add_field("grant_type", "client_credentials")
-        data.add_field("client_id",self._username)
+        data.add_field("client_id", self._username)
         data.add_field("client_secret", self._password)
-        return  await self._api_wrapper(
+        return await self._api_wrapper(
             method="post",
             url="https://www.drivepro.io/oAuth/Token",
             formdata=data,
-            headers={"Content-type": "application/x-www-form-urlencoded"}
+            headers={"Content-type": "application/x-www-form-urlencoded"},
         )
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
         LOGGER.debug("Drivepro Fetch Data")
         tokens = await self.async_get_access_token()
-        LOGGER.debug("Drivepro Tokens %s",tokens)
+        LOGGER.debug("Drivepro Tokens received")
         vehicledata = await self._api_wrapper(
             method="get",
             url="https://www.drivepro.io/FleetApi/GetVehicles?PageSize=100",
-            headers={"Authorization": "Bearer " + tokens["access_token"]}
+            headers={"Authorization": "Bearer " + tokens["access_token"]},
         )
-        LOGGER.debug("Drivepro Vehicles %s",vehicledata)
+        LOGGER.debug("Drivepro Vehicles %s", vehicledata)
         return vehicledata
-
 
     async def _api_wrapper(
         self,
         method: str,
         url: str,
         jsondata: dict | None = None,
-        formdata: aiohttp.FormData| None=None,
+        formdata: aiohttp.FormData | None = None,
         headers: dict | None = None,
     ) -> Any:
         """Get information from the API."""
@@ -95,7 +94,7 @@ class DriveproIntegrationApiClient:
                     url=url,
                     headers=headers,
                     json=jsondata,
-                    data=formdata
+                    data=formdata,
                 )
                 _verify_response_or_raise(response)
                 return await response.json()

@@ -1,20 +1,29 @@
-"""BlueprintEntity class."""
+"""DriveproIntegrationEntity class."""
 
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION
 from .coordinator import DriveproDataUpdateCoordinator
-from .data import DriveproVehicle
+
+if TYPE_CHECKING:
+    from .data import DriveproVehicle
+
 
 class DriveproIntegrationEntity(CoordinatorEntity[DriveproDataUpdateCoordinator]):
-    """BlueprintEntity class."""
+    """DriveproIntegrationEntity class."""
 
     _attr_attribution = ATTRIBUTION
 
-    def __init__(self,coordinator: DriveproDataUpdateCoordinator,vehicle: DriveproVehicle) -> None:
+    def __init__(
+        self,
+        coordinator: DriveproDataUpdateCoordinator,
+        vehicle: DriveproVehicle,
+    ) -> None:
         """Initialize."""
         super().__init__(coordinator)
         self.vehicle = vehicle
@@ -24,9 +33,9 @@ class DriveproIntegrationEntity(CoordinatorEntity[DriveproDataUpdateCoordinator]
                 (
                     coordinator.config_entry.domain,
                     vehicle.FleetVehicleId,
-                ),                
+                ),
             },
             name=vehicle.Label,
             model=vehicle.Model,
-            manufacturer=vehicle.Manufacturer
+            manufacturer=vehicle.Manufacturer,
         )

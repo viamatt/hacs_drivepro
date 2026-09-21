@@ -49,15 +49,15 @@ async def async_setup_entry(
     config_vehicle: DriveproVehicle
     for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
         vehicle = DriveproVehicle(config_vehicle)
-        for description in BINARY_SENSOR_TYPES:
-            binary_sensors.append(
-                DriveproIntegrationBinarySensor(
-                    coordinator=entry.runtime_data.coordinator,
-                    vehicle=vehicle,
-                    description=description,
-                )
+        binary_sensors.extend(
+            DriveproIntegrationBinarySensor(
+                coordinator=entry.runtime_data.coordinator,
+                vehicle=vehicle,
+                description=description,
             )
-    async_add_entities(binary_sensors, True)
+            for description in BINARY_SENSOR_TYPES
+        )
+    async_add_entities(binary_sensors, update_before_add=True)
 
 
 class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEntity):
