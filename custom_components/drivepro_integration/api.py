@@ -78,6 +78,19 @@ class DriveproIntegrationApiClient:
         LOGGER.debug("Drivepro Vehicles %s", vehicledata)
         return vehicledata
 
+    async def async_set_arm_state(self, vehicle_id: str, armed: bool) -> Any:  # noqa: FBT001
+        """Arm or disarm a vehicle."""
+        LOGGER.debug("Drivepro Set Arm State %s -> %s", vehicle_id, armed)
+        tokens = await self.async_get_access_token()
+        return await self._api_wrapper(
+            method="post",
+            url=(
+                "https://www.drivepro.io/FleetApi/SetArmState"
+                f"?VehicleId={vehicle_id}&NewState={'true' if armed else 'false'}"
+            ),
+            headers={"Authorization": "Bearer " + tokens["access_token"]},
+        )
+
     async def _api_wrapper(
         self,
         method: str,
