@@ -79,13 +79,17 @@ class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEnt
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
+        self._refresh_vehicle()
+        is_on = (
+            self.vehicle.ArmState == "STATEARMED"
+            if self.entity_description.key == "Armed"
+            else bool(getattr(self.vehicle, self.entity_description.key))
+        )
         LOGGER.debug(
-            "DrivePro Updating binary_sensor '%s' of %s",
+            "DrivePro updated binary_sensor '%s' of %s to %s",
             self.entity_description.key,
             self.vehicle.Label,
+            is_on,
         )
-        if self.entity_description.key == "Armed":
-            self._attr_is_on = self.vehicle.ArmState == "STATEARMED"
-        else:
-            self._attr_is_on = bool(getattr(self.vehicle, self.entity_description.key))
+        self._attr_is_on = is_on
         super()._handle_coordinator_update()

@@ -41,7 +41,17 @@ class DriveproDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> Any:
         """Update data via library."""
         try:
-            return await self.config_entry.runtime_data.client.async_get_data()
+            data = await self.config_entry.runtime_data.client.async_get_data()
+            vehicles = data.get("Vehicles", [])
+            LOGGER.debug(
+                "DrivePro coordinator refresh succeeded: %d vehicle(s) (%s)",
+                len(vehicles),
+                ", ".join(
+                    str(vehicle.get("FleetVehicleId"))
+                    for vehicle in vehicles
+                ),
+            )
+            return data
         except DriveproIntegrationApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
         except DriveproIntegrationApiClientError as exception:

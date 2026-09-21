@@ -203,10 +203,13 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
+        self._refresh_vehicle()
+        value = getattr(self.vehicle, self.entity_description.key)
         LOGGER.debug(
-            "DrivePro Updating sensor '%s' of %s",
+            "DrivePro updated sensor '%s' of %s to %s",
             self.entity_description.key,
             self.vehicle.Label,
+            value,
         )
-        self._attr_native_value = getattr(self.vehicle, self.entity_description.key)
+        self._attr_native_value = value
         super()._handle_coordinator_update()

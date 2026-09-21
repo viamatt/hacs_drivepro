@@ -74,14 +74,12 @@ class DriveproIntegrationSwitch(DriveproIntegrationEntity, SwitchEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        for config_vehicle in self.coordinator.data["Vehicles"]:
-            if config_vehicle["FleetVehicleId"] == self.vehicle.FleetVehicleId:
-                self.vehicle = DriveproVehicle(config_vehicle)
-                break
+        self._refresh_vehicle()
         LOGGER.debug(
-            "DrivePro Updating switch '%s' of %s",
+            "DrivePro updated switch '%s' of %s to %s",
             self.entity_description.key,
             self.vehicle.Label,
+            self.vehicle.ArmState == "STATEARMED",
         )
         self._attr_is_on = self.vehicle.ArmState == "STATEARMED"
         super()._handle_coordinator_update()
