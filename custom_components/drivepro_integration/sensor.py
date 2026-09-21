@@ -2,58 +2,159 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
-
-from .entity import DriveproIntegrationEntity
-
-from .data import (DriveproVehicle)
-from .const import LOGGER
-from collections.abc import Callable
 from dataclasses import dataclass
+
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.const import (
+    UnitOfElectricPotential,
+    UnitOfLength,
+    UnitOfSpeed,
+    UnitOfTime,
+)
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.const import LENGTH, PERCENTAGE, VOLUME
+
+from .const import LOGGER
 from .coordinator import DriveproDataUpdateCoordinator
-from .data import DriveproIntegrationConfigEntry,ValueWithUnit
+from .data import DriveproIntegrationConfigEntry, DriveproVehicle
+from .entity import DriveproIntegrationEntity
 
 
 @dataclass
 class DriveproSensorEntityDescription(SensorEntityDescription):
-    """Describes BMW sensor entity."""
-
-    key_class: str | None = None
-    unit_type: str | None = None
-    value: Callable = lambda x, y: x
+    """Describes a Drivepro sensor entity."""
 
 
-def convert_and_round(
-    state: ValueWithUnit,
-    converter: Callable[[float | None, str], float],
-    precision: int,
-) -> float | None:
-    """Safely convert and round a value from ValueWithUnit."""
-    if state.value and state.unit:
-        return round(
-            converter(state.value, state.unit, precision
-        ))
-    if state.value:
-        return state.value
-    return None
+SENSOR_TYPES: tuple[DriveproSensorEntityDescription, ...] = (
+    DriveproSensorEntityDescription(
+        key="SupplyVoltage",
+        name="Supply Voltage",
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:current-dc",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="BatteryVoltage",
+        name="Battery Voltage",
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:battery",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="CurrentOdo",
+        name="Odometer",
+        native_unit_of_measurement=UnitOfLength.KILOMETERS,
+        device_class=SensorDeviceClass.DISTANCE,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        icon="mdi:counter",
+    ),
+    DriveproSensorEntityDescription(
+        key="TripOdoMeters",
+        name="Trip Odometer",
+        native_unit_of_measurement=UnitOfLength.METERS,
+        device_class=SensorDeviceClass.DISTANCE,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        icon="mdi:map-marker-distance",
+    ),
+    DriveproSensorEntityDescription(
+        key="LastSeenSpeedKph",
+        name="Speed",
+        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
+        device_class=SensorDeviceClass.SPEED,
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:speedometer",
+    ),
+    DriveproSensorEntityDescription(
+        key="LastSeenHeading",
+        name="Heading",
+        native_unit_of_measurement="°",
+        icon="mdi:compass",
+    ),
+    DriveproSensorEntityDescription(
+        key="IgnOnSeconds",
+        name="Ignition On Time",
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        device_class=SensorDeviceClass.DURATION,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        icon="mdi:timer-outline",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="DtcFaultCount",
+        name="Fault Count",
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:alert-circle-outline",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="Co2EmissionsGramKm",
+        name="CO2 Emissions",
+        native_unit_of_measurement="g/km",
+        icon="mdi:molecule-co2",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="ModelYear",
+        name="Model Year",
+        icon="mdi:calendar",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="ArmState",
+        name="Arm State",
+        icon="mdi:shield-lock-outline",
+    ),
+    DriveproSensorEntityDescription(
+        key="Mode",
+        name="Mode",
+        icon="mdi:car-info",
+    ),
+    DriveproSensorEntityDescription(
+        key="RegistrationNumber",
+        name="Registration Number",
+        icon="mdi:card-text-outline",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="Vin",
+        name="VIN",
+        icon="mdi:identifier",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="DriverName",
+        name="Driver",
+        icon="mdi:account",
+    ),
+    DriveproSensorEntityDescription(
+        key="LastSeenLocationName",
+        name="Location",
+        icon="mdi:map-marker",
+    ),
+    DriveproSensorEntityDescription(
+        key="EntityGroupName",
+        name="Group",
+        icon="mdi:folder-outline",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    DriveproSensorEntityDescription(
+        key="CountryCode",
+        name="Country",
+        icon="mdi:flag-outline",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+)
 
-
-
-SENSOR_TYPES: dict[str, DriveproSensorEntityDescription] = {
-    # --- Generic ---
-    "SupplyMilliVoltage": DriveproSensorEntityDescription(
-        key="SupplyMilliVoltage",
-        name="Supply MilliVolts",
-        unit_type="mV",
-        icon="mdi:current-ac",
-    )
-}
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
@@ -61,30 +162,21 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    #LOGGER.debug("Drivepro Setup Sensors %s",entry.runtime_data.coordinator.data)
-
     sensors = []
-    config_vehicle:DriveproVehicle
+    config_vehicle: DriveproVehicle
     for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
-            veh=DriveproVehicle(config_vehicle)
-            sensors.append(DriveproIntegrationSensor(                 
-                 coordinator=entry.runtime_data.coordinator,
-                 vehicle=veh,
-                 description = DriveproSensorEntityDescription(
-        key="SupplyVoltage",
-        name=veh.Label+" "+"Supply Voltage",
-        unit_type="V",
-        icon="mdi:current-dc",
-    )))
-    ## add all the sensors
+        vehicle = DriveproVehicle(config_vehicle)
+        for description in SENSOR_TYPES:
+            if getattr(vehicle, description.key, None) is None:
+                continue
+            sensors.append(
+                DriveproIntegrationSensor(
+                    coordinator=entry.runtime_data.coordinator,
+                    vehicle=vehicle,
+                    description=description,
+                )
+            )
     async_add_entities(sensors, True)
-    # async_add_entities(
-    #     DriveproIntegrationSensor(
-    #         coordinator=entry.runtime_data.coordinator,
-    #         entity_description=entity_description,
-    #     )
-    #     for entity_description in ENTITY_DESCRIPTIONS
-    
 
 
 class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
@@ -97,31 +189,19 @@ class DriveproIntegrationSensor(DriveproIntegrationEntity, SensorEntity):
         description: DriveproSensorEntityDescription,
     ) -> None:
         """Initialize the sensor class."""
-        LOGGER.debug("Drivepro INIT Sensor %s",vehicle)
         super().__init__(coordinator, vehicle)
-        self.vehicle=vehicle
-        self._attr_unique_id = f"{vehicle.FleetVehicleId}-{description.key}"
+        self.vehicle = vehicle
         self.entity_description = description
-        # Set the correct unit of measurement based on the unit_type
-        if description.unit_type:
-            self._attr_native_unit_of_measurement = (
-                coordinator.hass.config.units.as_dict().get(description.unit_type)
-                or description.unit_type
-            )
-      
+        self._attr_unique_id = f"{vehicle.FleetVehicleId}-{description.key}"
+        self._attr_name = f"{vehicle.Label} {description.name}"
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         LOGGER.debug(
-            "DrivePro Updating sensor '%s' of %s", self.entity_description.key, self.vehicle.Label
+            "DrivePro Updating sensor '%s' of %s",
+            self.entity_description.key,
+            self.vehicle.Label,
         )
-        if self.entity_description.key_class is None:
-            state = getattr(self.vehicle, self.entity_description.key)
-        else:
-            state = getattr(
-                getattr(self.vehicle, self.entity_description.key_class),
-                self.entity_description.key,
-            )
-        self._attr_native_value = state        
+        self._attr_native_value = getattr(self.vehicle, self.entity_description.key)
         super()._handle_coordinator_update()

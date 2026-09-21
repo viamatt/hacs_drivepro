@@ -58,10 +58,15 @@ class DriveproDeviceTracker(DriveproIntegrationEntity, TrackerEntity):
         self._attr_unique_id = vehicle.FleetVehicleId
         self._attr_name = vehicle.Label
 
-    # @property
-    # def extra_state_attributes(self) -> dict[str, Any]:
-    #     """Return entity specific state attributes."""
-    #     return {**self._attrs, "direction": self.vehicle.Heading}
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return entity specific state attributes."""
+        return {
+            "heading": self.vehicle.Heading,
+            "speed_kph": self.vehicle.SpeedKph,
+            "location_name": self.vehicle.LocationName,
+            "driver_name": self.vehicle.DriverName,
+        }
 
     @property
     def latitude(self) -> float | None:

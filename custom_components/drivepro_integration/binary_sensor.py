@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from homeassistant.components.binary_sensor import (
@@ -9,21 +10,31 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
+from homeassistant.core import callback
 
+from .const import LOGGER
+from .data import DriveproVehicle
 from .entity import DriveproIntegrationEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .coordinator import BlueprintDataUpdateCoordinator
+    from .coordinator import DriveproDataUpdateCoordinator
     from .data import DriveproIntegrationConfigEntry
 
-ENTITY_DESCRIPTIONS = (
-    BinarySensorEntityDescription(
-        key="integration_blueprint",
-        name="Integration Blueprint Binary Sensor",
-        device_class=BinarySensorDeviceClass.CONNECTIVITY,
+
+@dataclass
+class DriveproBinarySensorEntityDescription(BinarySensorEntityDescription):
+    """Describes a Drivepro binary_sensor entity."""
+
+
+BINARY_SENSOR_TYPES: tuple[DriveproBinarySensorEntityDescription, ...] = (
+    DriveproBinarySensorEntityDescription(
+        key="Armed",
+        name="Armed",
+        device_class=BinarySensorDeviceClass.LOCK,
+        icon="mdi:shield-lock-outline",
     ),
 )
 
@@ -34,13 +45,19 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the binary_sensor platform."""
-    # async_add_entities(
-    #     DriveproIntegrationBinarySensor(
-    #         coordinator=entry.runtime_data.coordinator,
-    #         entity_description=entity_description,
-    #     )
-    #     for entity_description in ENTITY_DESCRIPTIONS
-    # )
+    binary_sensors = []
+    config_vehicle: DriveproVehicle
+    for config_vehicle in entry.runtime_data.coordinator.data["Vehicles"]:
+        vehicle = DriveproVehicle(config_vehicle)
+        for description in BINARY_SENSOR_TYPES:
+            binary_sensors.append(
+                DriveproIntegrationBinarySensor(
+                    coordinator=entry.runtime_data.coordinator,
+                    vehicle=vehicle,
+                    description=description,
+                )
+            )
+    async_add_entities(binary_sensors, True)
 
 
 class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEntity):
@@ -48,16 +65,27 @@ class DriveproIntegrationBinarySensor(DriveproIntegrationEntity, BinarySensorEnt
 
     def __init__(
         self,
+        coordinator: DriveproDataUpdateCoordinator,
         vehicle: DriveproVehicle,
-        coordinator: BlueprintDataUpdateCoordinator,
-        entity_description: BinarySensorEntityDescription,
+        description: DriveproBinarySensorEntityDescription,
     ) -> None:
         """Initialize the binary_sensor class."""
-        super().__init__(coordinator)
-        self.entity_description = entity_description
+        super().__init__(coordinator, vehicle)
+        self.vehicle = vehicle
+        self.entity_description = description
+        self._attr_unique_id = f"{vehicle.FleetVehicleId}-{description.key}"
+        self._attr_name = f"{vehicle.Label} {description.name}"
 
-    @property
-    def is_on(self) -> bool:
-        """Return true if the binary_sensor is on."""
-        #return self.coordinator.data.get("title", "") == "foo"
-        return True
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        LOGGER.debug(
+            "DrivePro Updating binary_sensor '%s' of %s",
+            self.entity_description.key,
+            self.vehicle.Label,
+        )
+        if self.entity_description.key == "Armed":
+            self._attr_is_on = self.vehicle.ArmState == "STATEARMED"
+        else:
+            self._attr_is_on = bool(getattr(self.vehicle, self.entity_description.key))
+        super()._handle_coordinator_update()
