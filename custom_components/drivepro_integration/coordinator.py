@@ -46,10 +46,7 @@ class DriveproDataUpdateCoordinator(DataUpdateCoordinator):
             LOGGER.debug(
                 "DrivePro coordinator refresh succeeded: %d vehicle(s) (%s)",
                 len(vehicles),
-                ", ".join(
-                    str(vehicle.get("FleetVehicleId"))
-                    for vehicle in vehicles
-                ),
+                ", ".join(str(vehicle.get("FleetVehicleId")) for vehicle in vehicles),
             )
         except DriveproIntegrationApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception

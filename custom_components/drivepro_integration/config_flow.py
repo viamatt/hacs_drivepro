@@ -68,6 +68,9 @@ class DriveproFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 },
             ),
+            description_placeholders={
+                "docs_url": "https://github.com/viamatt/hacs_drivepro#setup",
+            },
             errors=_errors,
         )
 
