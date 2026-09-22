@@ -51,8 +51,9 @@ class DriveproDataUpdateCoordinator(DataUpdateCoordinator):
                     for vehicle in vehicles
                 ),
             )
-            return data
         except DriveproIntegrationApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
         except DriveproIntegrationApiClientError as exception:
             raise UpdateFailed(exception) from exception
+        else:
+            return data
