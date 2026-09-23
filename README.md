@@ -19,8 +19,8 @@ If you don't yet own any DrivePro tracking hardware, compatible trackers and das
 This integration authenticates with the DrivePro Fleet API using an OAuth2 `client_credentials` grant. You will need a **Client ID** and **Client Secret** for your account:
 
 1. Sign in to your account at [https://www.drivepro.io/](https://www.drivepro.io/).
-2. Locate the Fleet API / developer credentials section of your account settings.
-3. Generate (or copy) your Client ID and Client Secret.
+2. Visit [https://www.drivepro.io/FleetApi/Clients](https://www.drivepro.io/FleetApi/Clients).
+3. Add a new API client. The system will display a **Client ID** and **Client Secret**.
 4. Keep these safe — you'll enter them as the "Username" and "Password" fields when setting up the integration in Home Assistant.
 
 If you can't find API access on your account, contact DrivePro support to have it enabled.
