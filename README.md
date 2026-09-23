@@ -2,9 +2,9 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
-A custom [Home Assistant](https://www.home-assistant.io/) integration for [DrivePro](https://www.drivepro.io/) vehicle trackers. It polls the DrivePro Fleet API and exposes each vehicle on your account as a set of Home Assistant entities: a device tracker (GPS location), sensors (odometer, speed, driver, arm state, etc.) and a binary sensor for the vehicle's armed status.
+A custom [Home Assistant](https://www.home-assistant.io/) integration for [DrivePro](https://www.drivepro.io/) vehicle trackers. It polls the DrivePro Fleet API and exposes each vehicle on your account as a device with sensors and a device tracker.
 
-This integration is unofficial and is not affiliated with or endorsed by DrivePro.
+This is an official integration supported by DrivePro.io Ltd.
 
 ## Requirements
 
@@ -53,7 +53,7 @@ If you can't find API access on your account, contact DrivePro support to have i
 For each vehicle, the integration creates:
 
 - **Device tracker** — current GPS location, with heading, speed, location name and driver name as attributes.
-- **Sensors** — odometer, trip odometer, speed, heading, ignition-on time, fault count, CO2 emissions, model year, arm state, mode, registration number, VIN, driver, last known location, group, country, supply voltage and battery voltage (only created when the underlying data is available for that vehicle).
+- **Sensors** — odometer, trip odometer, speed, heading, ignition-on time, fault count, CO2 emissions, model year, arm state, mode, registration number, VIN, driver, last known location, group, and more.
 - **Binary sensor** — "Armed" state of the vehicle.
 
 Data is refreshed from the DrivePro API every 30 seconds.
@@ -74,4 +74,4 @@ Data is refreshed from the DrivePro API every 30 seconds.
 
 ## Disclaimer
 
-This is a community-maintained integration and is provided as-is, with no warranty. Never share your DrivePro API credentials or Home Assistant configuration containing them publicly.
+This official integration is supported by DrivePro.io Ltd and is provided as-is. Never share your DrivePro API credentials or Home Assistant configuration containing them publicly.
