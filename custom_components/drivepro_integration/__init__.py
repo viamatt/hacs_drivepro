@@ -15,7 +15,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import DriveproIntegrationApiClient
-from .coordinator import DriveproDataUpdateCoordinator
+from .coordinator import DriveproDataUpdateCoordinator, DriveproDetailsCoordinator
 from .data import DriveproIntegrationData
 
 if TYPE_CHECKING:
@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from .data import DriveproIntegrationConfigEntry
 
 PLATFORMS: list[Platform] = [
+    Platform.BUTTON,
     Platform.SENSOR,
     Platform.SWITCH,
     Platform.DEVICE_TRACKER,
@@ -49,6 +50,10 @@ async def async_setup_entry(
         ),
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
+        details_coordinator=DriveproDetailsCoordinator(
+            hass=hass,
+            vehicle_coordinator=coordinator,
+        ),
     )
 
     # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
@@ -56,6 +61,13 @@ async def async_setup_entry(
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+
+    # Trips and reminders take a call per vehicle; fetch them without holding up setup
+    entry.async_create_background_task(
+        hass,
+        entry.runtime_data.details_coordinator.async_refresh(),
+        "drivepro_details_first_refresh",
+    )
 
     return True
 

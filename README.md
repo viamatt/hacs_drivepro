@@ -55,8 +55,11 @@ For each vehicle, the integration creates:
 - **Device tracker** — current GPS location, with heading, speed, location name and driver name as attributes.
 - **Sensors** — odometer, trip odometer, speed, heading, ignition-on time, fault count, CO2 emissions, model year, arm state, mode, registration number, VIN, driver, last known location, group, and more.
 - **Switch** — "Armed": shows whether the vehicle is armed, and arms or disarms it when toggled.
+- **Last trip** — when the last completed trip ended (with its start time, start and end addresses, driver, top and average speed, CO2 and whether it was private as attributes), plus its distance, duration and driving score.
+- **MOT Due** and **Tax Due** — dates from the DVLA for vehicles with a UK registration, with the MOT status, last MOT result and tax status as attributes.
+- **Reminders** — a "<reminder> Due" sensor for each reminder set up in DrivePro (e.g. "Service Due"), showing the due date, or the odometer reading for reminders set by distance only, with its status (Scheduled, DueSoon or Overdue). Each has a "<reminder> Done" button that marks it done in DrivePro, which schedules the next one. Reminders added in DrivePro appear in Home Assistant within the hour. MOT and tax reminders are shown on the MOT Due and Tax Due sensors instead (as `reminder_status`), so names never clash.
 
-Data is refreshed from the DrivePro API every 30 seconds. The API access token is reused until shortly before it expires, and accounts with more than 100 vehicles are fetched page by page.
+Locations and vehicle status are refreshed from the DrivePro API every 30 seconds. Last trips are refreshed every 10 minutes, and MOT, tax and reminders every hour; these take one request per vehicle, spaced to stay within the API's rate limits. The API access token is reused until shortly before it expires, and accounts with more than 100 vehicles are fetched page by page.
 
 ### Upgrading from the Armed binary sensor
 

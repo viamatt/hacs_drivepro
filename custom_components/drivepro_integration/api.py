@@ -6,6 +6,7 @@ import asyncio
 import socket
 import time
 from typing import Any
+from urllib.parse import quote
 
 import aiohttp
 import async_timeout
@@ -140,6 +141,46 @@ class DriveproIntegrationApiClient:
             )
         LOGGER.debug("DrivePro vehicle data received: %d vehicle(s)", len(vehicles))
         return {"Count": len(vehicles), "Vehicles": vehicles}
+
+    async def async_get_vehicle_details(self, vehicle_id: str) -> Any:
+        """Get one vehicle's details, including its MOT, tax and reminders."""
+        return await self._authorized_request(
+            method="get",
+            url=f"{API_BASE_URL}/FleetApi/GetVehicleDetails?VehicleId={vehicle_id}",
+        )
+
+    async def async_get_last_trip(self, vehicle_id: str) -> dict | None:
+        """Get a vehicle's most recent completed trip, or None if it has none."""
+        trips = await self._authorized_request(
+            method="get",
+            url=(
+                f"{API_BASE_URL}/FleetApi/GetVehicleTrips"
+                f"?VehicleId={vehicle_id}&Page=0&PageSize=1"
+            ),
+        )
+        # A plain list of trips, or (like the paged range queries) {"Trips": [...]}
+        if isinstance(trips, dict):
+            trips = trips.get("Trips")
+        return trips[0] if trips else None
+
+    async def async_acknowledge_reminder(
+        self,
+        vehicle_id: str,
+        reminder_id: str,
+        note: str = "",
+    ) -> None:
+        """Mark a reminder as done, which schedules its next occurrence."""
+        LOGGER.debug("Drivepro Acknowledge Reminder %s of %s", reminder_id, vehicle_id)
+        result = await self._authorized_request(
+            method="post",
+            url=(
+                f"{API_BASE_URL}/FleetApi/ReminderAck?VehicleId={vehicle_id}"
+                f"&ReminderScheduleId={reminder_id}&Note={quote(note)}"
+            ),
+        )
+        if (result or {}).get("Result") != "Ok":
+            msg = f"Reminder {reminder_id} was not acknowledged: {result}"
+            raise DriveproIntegrationApiClientError(msg)
 
     async def async_set_arm_state(self, vehicle_id: str, armed: bool) -> Any:  # noqa: FBT001
         """Arm or disarm a vehicle."""
