@@ -2,7 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
-A custom [Home Assistant](https://www.home-assistant.io/) integration for [DrivePro](https://www.drivepro.io/) vehicle trackers. It polls the DrivePro Fleet API and exposes each vehicle on your account as a device with sensors and a device tracker.
+A custom [Home Assistant](https://www.home-assistant.io/) integration for [DrivePro](https://www.drivepro.io/) vehicle trackers. It polls the DrivePro Fleet API and exposes each vehicle on your account as a device with sensors, a device tracker and a switch to arm or disarm it.
 
 This is an official integration supported by DrivePro.io Ltd.
 
@@ -54,9 +54,13 @@ For each vehicle, the integration creates:
 
 - **Device tracker** — current GPS location, with heading, speed, location name and driver name as attributes.
 - **Sensors** — odometer, trip odometer, speed, heading, ignition-on time, fault count, CO2 emissions, model year, arm state, mode, registration number, VIN, driver, last known location, group, and more.
-- **Binary sensor** — "Armed" state of the vehicle.
+- **Switch** — "Armed": shows whether the vehicle is armed, and arms or disarms it when toggled.
 
-Data is refreshed from the DrivePro API every 30 seconds.
+Data is refreshed from the DrivePro API every 30 seconds. The API access token is reused until shortly before it expires, and accounts with more than 100 vehicles are fetched page by page.
+
+### Upgrading from the Armed binary sensor
+
+Earlier versions also created an "Armed" binary sensor (`binary_sensor.<vehicle>_armed`) with the same name as the Armed switch, so voice assistants such as Assist couldn't tell them apart. The binary sensor has been removed and is cleaned up automatically on upgrade. Point any automations, scripts or dashboards that used it at `switch.<vehicle>_armed` instead (its state is `on` when armed).
 
 ## Troubleshooting
 

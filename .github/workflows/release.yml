@@ -17,13 +17,22 @@ jobs:
       - name: "Checkout the repository"
         uses: "actions/checkout@v7.0.1"
 
+      - name: "Set the manifest version to the release tag"
+        shell: "bash"
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          cd "${{ github.workspace }}/custom_components/drivepro_integration"
+          jq --arg version "${RELEASE_TAG#v}" '.version = $version' manifest.json > manifest.tmp
+          mv manifest.tmp manifest.json
+
       - name: "ZIP the integration directory"
         shell: "bash"
         run: |
-          cd "${{ github.workspace }}/custom_components/integration_blueprint"
-          zip integration_blueprint.zip -r ./
+          cd "${{ github.workspace }}/custom_components/drivepro_integration"
+          zip drivepro_integration.zip -r ./ -x "__pycache__/*"
 
       - name: "Upload the ZIP file to the release"
         uses: "softprops/action-gh-release@v3.0.3"
         with:
-          files: ${{ github.workspace }}/custom_components/integration_blueprint/integration_blueprint.zip
+          files: ${{ github.workspace }}/custom_components/drivepro_integration/drivepro_integration.zip

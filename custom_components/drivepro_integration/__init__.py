@@ -1,8 +1,8 @@
 """
-Custom integration to integrate drivepro_integration with Home Assistant.
+Custom integration to integrate DrivePro with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/viamatt/drivepro_integration
+https://github.com/viamatt/hacs_drivepro
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
@@ -24,7 +25,6 @@ if TYPE_CHECKING:
 
 PLATFORMS: list[Platform] = [
     Platform.SENSOR,
-    Platform.BINARY_SENSOR,
     Platform.SWITCH,
     Platform.DEVICE_TRACKER,
 ]
@@ -36,6 +36,8 @@ async def async_setup_entry(
     entry: DriveproIntegrationConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
+    _async_remove_armed_binary_sensors(hass, entry)
+
     coordinator = DriveproDataUpdateCoordinator(
         hass=hass,
     )
@@ -73,3 +75,18 @@ async def async_reload_entry(
     """Reload config entry."""
     await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
+
+
+def _async_remove_armed_binary_sensors(
+    hass: HomeAssistant,
+    entry: DriveproIntegrationConfigEntry,
+) -> None:
+    """
+    Remove the old Armed binary sensors from the entity registry.
+
+    They duplicated the Armed switch, so Assist couldn't tell the two apart.
+    """
+    registry = er.async_get(hass)
+    for registry_entry in er.async_entries_for_config_entry(registry, entry.entry_id):
+        if registry_entry.domain == Platform.BINARY_SENSOR:
+            registry.async_remove(registry_entry.entity_id)

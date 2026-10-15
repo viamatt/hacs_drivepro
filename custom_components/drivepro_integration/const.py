@@ -1,4 +1,4 @@
-"""Constants for integration_blueprint."""
+"""Constants for the DrivePro integration."""
 
 from logging import Logger, getLogger
 

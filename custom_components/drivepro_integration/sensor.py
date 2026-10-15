@@ -1,4 +1,4 @@
-"""Sensor platform for integration_blueprint."""
+"""Sensor platform for the DrivePro integration."""
 
 from __future__ import annotations
 

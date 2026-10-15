@@ -1,4 +1,4 @@
-"""DataUpdateCoordinator for integration_blueprint."""
+"""DataUpdateCoordinator for the DrivePro integration."""
 
 from __future__ import annotations
 
