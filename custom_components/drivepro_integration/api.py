@@ -39,6 +39,12 @@ class DriveproIntegrationApiClientAuthenticationError(
     """Exception to indicate an authentication error."""
 
 
+class DriveproIntegrationApiClientAccountSuspendedError(
+    DriveproIntegrationApiClientError,
+):
+    """Exception to indicate the DrivePro account is suspended or in debit."""
+
+
 def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     """Verify that the response is valid."""
     if response.status in (401, 403):
@@ -47,6 +53,21 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
             msg,
         )
     response.raise_for_status()
+    # DrivePro redirects every request from a suspended or in-debit account to its
+    # reactivation web page, which then arrives here as HTML instead of JSON
+    if "/activate/reactivate" in response.url.path.lower():
+        msg = (
+            "DrivePro has paused API access because the account is suspended or "
+            "has an unpaid balance. Sign in at https://www.drivepro.io to "
+            "reactivate it"
+        )
+        raise DriveproIntegrationApiClientAccountSuspendedError(msg)
+    if response.content_type != "application/json":
+        msg = (
+            f"DrivePro returned a {response.content_type} page instead of data "
+            f"(from {response.url.path})"
+        )
+        raise DriveproIntegrationApiClientCommunicationError(msg)
 
 
 class DriveproIntegrationApiClient:
